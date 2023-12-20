@@ -23,7 +23,7 @@ func init() {
 
 var rootCmd = cli.Command{
 	Name:        "miflo",
-	Description: "miflow is a simple migration manager tool for SQLite and PostgreSQL",
+	Description: "miflo is a simple migration manager tool for SQLite and PostgreSQL",
 	SubCommands: make(map[string]*cli.Command),
 	Flags:       flag.NewFlagSet("miflo", flag.ExitOnError),
 	Run: func(cmd *cli.Command, args []string) {
