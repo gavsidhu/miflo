@@ -49,7 +49,7 @@ jobs:
         run: rm -rf tmp
 
   goreleaser:
-    need: test
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
