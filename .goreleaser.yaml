@@ -1,9 +1,5 @@
 builds:
   - binary: miflo
-    env:
-      - CGO_ENABLED=0
-    ldflags:
-      - -s -w -X github.com/gavsidhu/miflo/cmd.Version={{.Version}}
     goos:
       - linux
       - windows
@@ -12,12 +8,10 @@ builds:
       - amd64
       - arm64
       - arm
-
-release:
-  prerelease: auto
-
-universal_binaries:
-  - replace: true
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X github.com/gavsidhu/miflo/cmd.Version={{.Version}}
 
 checksum:
   name_template: 'checksums.txt'
