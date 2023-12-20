@@ -29,7 +29,7 @@ var rootCmd = cli.Command{
 	Run: func(cmd *cli.Command, args []string) {
 
 		if showRootVersion {
-			fmt.Printf("v%s", Version)
+			fmt.Println("miflo version:", Version)
 			return
 		}
 
