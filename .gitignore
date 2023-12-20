@@ -1,0 +1,47 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Go workspace file
+go.work
+
+# Docker related files
+docker-compose.override.yml
+*.log
+*.tar
+*.tar.gz
+*.pid
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Generated files
+dist/
+
+# Test migration files
+migrations/
+
+# Temporary files:
+tmp/
+
+# Miscellaneous files
+.DS_Store
+
+# IDE and Editor folders
+.vscode/
+.idea/
+*.swp
+*.swo
