@@ -13,5 +13,8 @@ builds:
     ldflags:
       - -s -w -X github.com/gavsidhu/miflo/cmd.Version={{.Version}}
 
+archives:
+  - format: binary
+
 checksum:
   name_template: 'checksums.txt'
