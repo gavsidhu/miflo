@@ -55,7 +55,7 @@ func (db *SQLiteDB) RevertMigration(ctx context.Context, tx *sql.Tx, migrationNa
 func (db *SQLiteDB) DeleteMigration(ctx context.Context, tx *sql.Tx, batchNum int) error {
 	_, err := tx.ExecContext(ctx, "DELETE FROM migrations where batch = ?", batchNum)
 	if err != nil {
-		return fmt.Errorf("error exectuting migration row delete: %w", err)
+		return fmt.Errorf("error executing migration row delete: %w", err)
 	}
 
 	return nil

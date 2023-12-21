@@ -46,7 +46,7 @@ func (db *PostgresDB) RevertMigration(ctx context.Context, tx *sql.Tx, migration
 
 	_, err = tx.ExecContext(ctx, string(sqlBytes))
 	if err != nil {
-		return fmt.Errorf("error exectuing migration down file: %s %w", downFilePath, err)
+		return fmt.Errorf("error executing migration down file: %s %w", downFilePath, err)
 	}
 
 	return nil
