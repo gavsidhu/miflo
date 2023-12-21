@@ -7,6 +7,7 @@ Miflo is a database schema migration tool designed to simplify database schema c
 ## Installation
 
 **Mac**
+
 Install miflo by running the following command in your terminal:
 
 ```sh
