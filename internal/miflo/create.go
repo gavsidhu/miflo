@@ -4,36 +4,9 @@ import (
 	"fmt"
 	"os"
 	"path"
-
-	"github.com/gavsidhu/miflo/internal/helpers"
 )
 
 func CreateMigration(migrationName string, cwd string, timestamp int64) error {
-
-	var migrationsDirExists bool
-
-	_, err := os.Stat(path.Join(cwd, "migrations"))
-
-	if err != nil {
-		if os.IsNotExist(err) {
-			migrationsDirExists = false
-		} else {
-			fmt.Println("Error checking migrations directory:", err)
-			return err
-		}
-	} else {
-		migrationsDirExists = true
-	}
-
-	if !migrationsDirExists {
-		createDir := helpers.PromptForConfirmation("Migrations folder does not exist. Would you like to create it?")
-
-		if createDir {
-			os.Mkdir(path.Join(cwd, "migrations"), os.ModePerm)
-		} else {
-			return err
-		}
-	}
 
 	pathName := path.Join(cwd, "migrations", fmt.Sprintf("%d_%s", timestamp, migrationName))
 

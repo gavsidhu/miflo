@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path"
 	"time"
 
 	"github.com/gavsidhu/miflo/internal/cli"
@@ -44,6 +45,31 @@ var createCmd = cli.Command{
 
 		if err != nil {
 			fmt.Println("error getting current working directory: ", err)
+		}
+
+		var migrationsDirExists bool
+
+		_, err = os.Stat(path.Join(cwd, "migrations"))
+
+		if err != nil {
+			if os.IsNotExist(err) {
+				migrationsDirExists = false
+			} else {
+				fmt.Println("Error checking migrations directory:", err)
+				return
+			}
+		} else {
+			migrationsDirExists = true
+		}
+
+		if !migrationsDirExists {
+			createDir := helpers.PromptForConfirmation("Migrations folder does not exist. Would you like to create it?")
+
+			if createDir {
+				os.Mkdir(path.Join(cwd, "migrations"), os.ModePerm)
+			} else {
+				return
+			}
 		}
 
 		migrationName := args[0]
