@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -68,4 +69,10 @@ func SortDirMigrations(migrations []string, ascending bool) {
 		}
 		return timeJ < timeI
 	})
+}
+
+func IsValidMigrationName(migrationName string) bool {
+	validNamePattern := regexp.MustCompile(`^[A-Za-z_]+$`)
+
+	return validNamePattern.MatchString(migrationName)
 }
