@@ -8,6 +8,7 @@ import (
 	"github.com/gavsidhu/miflo/internal/cli"
 	"github.com/gavsidhu/miflo/internal/database"
 	"github.com/gavsidhu/miflo/internal/miflo"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -26,6 +27,12 @@ var listCmd = cli.Command{
 	Description: "List all pending migrations",
 	Flags:       flag.NewFlagSet("list", flag.ExitOnError),
 	Run: func(cmd *cli.Command, args []string) {
+
+		err := godotenv.Load()
+		if err != nil {
+			fmt.Println("Error loading .env file")
+			return
+		}
 
 		cmd.Flags.Parse(args)
 

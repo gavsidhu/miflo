@@ -9,6 +9,7 @@ import (
 	"github.com/gavsidhu/miflo/internal/cli"
 	"github.com/gavsidhu/miflo/internal/database"
 	"github.com/gavsidhu/miflo/internal/miflo"
+	"github.com/joho/godotenv"
 )
 
 var (
@@ -26,6 +27,12 @@ var revertCmd = cli.Command{
 	Description: "Rollback most recent migration",
 	Flags:       flag.NewFlagSet("revert", flag.ExitOnError),
 	Run: func(cmd *cli.Command, args []string) {
+
+		err := godotenv.Load()
+		if err != nil {
+			fmt.Println("Error loading .env file")
+			return
+		}
 
 		cmd.Flags.Parse(args)
 

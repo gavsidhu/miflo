@@ -10,6 +10,7 @@ import (
 	"github.com/gavsidhu/miflo/internal/cli"
 	"github.com/gavsidhu/miflo/internal/helpers"
 	"github.com/gavsidhu/miflo/internal/miflo"
+	"github.com/joho/godotenv"
 )
 
 var (
@@ -27,6 +28,12 @@ var createCmd = cli.Command{
 	Description: "Create a new migration",
 	Flags:       flag.NewFlagSet("create", flag.ExitOnError),
 	Run: func(cmd *cli.Command, args []string) {
+
+		err := godotenv.Load()
+		if err != nil {
+			fmt.Println("Error loading .env file")
+			return
+		}
 
 		cmd.Flags.Parse(args)
 

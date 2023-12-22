@@ -9,6 +9,7 @@ import (
 	"github.com/gavsidhu/miflo/internal/cli"
 	"github.com/gavsidhu/miflo/internal/database"
 	"github.com/gavsidhu/miflo/internal/miflo"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -28,6 +29,12 @@ var upCmd = cli.Command{
 	Description: "Apply all pending migrations",
 	Flags:       flag.NewFlagSet("apply", flag.ExitOnError),
 	Run: func(cmd *cli.Command, args []string) {
+
+		err := godotenv.Load()
+		if err != nil {
+			fmt.Println("Error loading .env file")
+			return
+		}
 
 		cmd.Flags.Parse(args)
 
