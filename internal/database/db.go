@@ -17,8 +17,9 @@ type Database interface {
 	GetNextBatchNumber() (int, error)
 	GetLastBatchNumber() (int, error)
 	GetAppliedMigrations() (*sql.Rows, error)
-	GetUnappliedMigrations() ([]string, error)
+	GetUnappliedMigrations(cwd string) ([]string, error)
 	GetMigrationsToRevert(batch int) ([]string, error)
+	ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
 	Close() error
 }
 

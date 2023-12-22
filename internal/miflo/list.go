@@ -7,8 +7,11 @@ import (
 	"github.com/gavsidhu/miflo/internal/helpers"
 )
 
-func ListPendingMigrations(db database.Database) error {
-	dirMigrations := helpers.GetDirMigrations()
+func ListPendingMigrations(db database.Database, cwd string) error {
+	dirMigrations, err := helpers.GetDirMigrations(cwd)
+	if err != nil {
+		return err
+	}
 
 	appliedMigrationsRows, err := db.GetAppliedMigrations()
 	if err != nil {

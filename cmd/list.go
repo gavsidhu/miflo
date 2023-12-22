@@ -48,7 +48,12 @@ var listCmd = cli.Command{
 
 		defer database.Close()
 
-		if err := miflo.ListPendingMigrations(database); err != nil {
+		cwd, err := os.Getwd()
+		if err != nil {
+			fmt.Println("error getting current working directory")
+		}
+
+		if err := miflo.ListPendingMigrations(database, cwd); err != nil {
 			fmt.Println(err)
 			return
 		}

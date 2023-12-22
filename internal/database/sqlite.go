@@ -69,13 +69,16 @@ func (db *SQLiteDB) Close() error {
 	return db.DB.Close()
 }
 
-func (db *SQLiteDB) GetUnappliedMigrations() ([]string, error) {
-	dirMigrations := helpers.GetDirMigrations()
+func (db *SQLiteDB) GetUnappliedMigrations(cwd string) ([]string, error) {
+	dirMigrations, err := helpers.GetDirMigrations(cwd)
+	if err != nil {
+		return nil, err
+	}
 
 	appliedMigrationsRows, err := db.GetAppliedMigrations()
 	if err != nil {
 		fmt.Println("error getting applied mitgrations:", err)
-		return nil, fmt.Errorf("errpr getting applied migrations: %w", err)
+		return nil, fmt.Errorf("error getting applied migrations: %w", err)
 	}
 
 	defer appliedMigrationsRows.Close()
@@ -98,7 +101,7 @@ func (db *SQLiteDB) GetAppliedMigrations() (*sql.Rows, error) {
 	rows, err := db.Query("SELECT name FROM migrations WHERE applied = TRUE")
 	if err != nil {
 		fmt.Println("Error getting applied migrations:", err)
-		return nil, fmt.Errorf("error quering for applied migrations: %w", err)
+		return nil, fmt.Errorf("error querying for applied migrations: %w", err)
 	}
 
 	return rows, nil

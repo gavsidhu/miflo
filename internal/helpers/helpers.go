@@ -40,15 +40,11 @@ func GetAppliedMigrationNames(rows *sql.Rows) ([]string, error) {
 	return migrations, nil
 }
 
-func GetDirMigrations() []string {
-	cwd, err := os.Getwd()
-	if err != nil {
-		fmt.Println("Error getting directory migrations")
-		return nil
-	}
-
+func GetDirMigrations(cwd string) ([]string, error) {
 	entries, err := os.ReadDir(path.Join(cwd, "migrations"))
-
+	if err != nil {
+		return nil, err
+	}
 	var migrations []string
 
 	for _, entry := range entries {
@@ -57,7 +53,7 @@ func GetDirMigrations() []string {
 		}
 	}
 
-	return migrations
+	return migrations, nil
 }
 
 func SortDirMigrations(migrations []string, ascending bool) {
