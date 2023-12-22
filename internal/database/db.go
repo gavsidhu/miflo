@@ -20,6 +20,7 @@ type Database interface {
 	GetUnappliedMigrations(cwd string) ([]string, error)
 	GetMigrationsToRevert(batch int) ([]string, error)
 	ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
+	QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error)
 	Close() error
 }
 
