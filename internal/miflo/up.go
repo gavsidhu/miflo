@@ -21,7 +21,7 @@ func ApplyMigrations(db database.Database, ctx context.Context, cwd string) erro
 		return fmt.Errorf("error getting next batch number: %w", err)
 	}
 
-	pendingMigrations, err := db.GetUnappliedMigrations()
+	pendingMigrations, err := db.GetUnappliedMigrations(cwd)
 	if err != nil {
 		return fmt.Errorf("error retrieving unapplied migrations: %w", err)
 	}
