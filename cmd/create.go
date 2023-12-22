@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/gavsidhu/miflo/internal/cli"
 	"github.com/gavsidhu/miflo/internal/helpers"
@@ -46,8 +47,9 @@ var createCmd = cli.Command{
 		}
 
 		migrationName := args[0]
+		timestamp := time.Now().Unix()
 
-		if err := miflo.CreateMigration(migrationName, cwd); err != nil {
+		if err := miflo.CreateMigration(migrationName, cwd, timestamp); err != nil {
 			fmt.Println("error creating migration: ", err)
 		}
 

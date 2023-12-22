@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"time"
 
 	"github.com/gavsidhu/miflo/internal/helpers"
 )
 
-func CreateMigration(migrationName string, cwd string) error {
+func CreateMigration(migrationName string, cwd string, timestamp int64) error {
 
 	var migrationsDirExists bool
 
@@ -35,8 +34,6 @@ func CreateMigration(migrationName string, cwd string) error {
 			return err
 		}
 	}
-
-	timestamp := time.Now().Unix()
 
 	pathName := path.Join(cwd, "migrations", fmt.Sprintf("%d_%s", timestamp, migrationName))
 
