@@ -77,7 +77,7 @@ func (db *SQLiteDB) GetUnappliedMigrations(cwd string) ([]string, error) {
 
 	appliedMigrationsRows, err := db.GetAppliedMigrations()
 	if err != nil {
-		fmt.Println("error getting applied mitgrations:", err)
+		fmt.Println("error getting applied migrations:", err)
 		return nil, fmt.Errorf("error getting applied migrations: %w", err)
 	}
 
@@ -85,6 +85,7 @@ func (db *SQLiteDB) GetUnappliedMigrations(cwd string) ([]string, error) {
 
 	appliedMigrations, err := helpers.GetAppliedMigrationNames(appliedMigrationsRows)
 	if err != nil {
+		return nil, err
 	}
 
 	var pendingMigrations []string
