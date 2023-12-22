@@ -15,13 +15,14 @@ func ListPendingMigrations(db database.Database, cwd string) error {
 
 	appliedMigrationsRows, err := db.GetAppliedMigrations()
 	if err != nil {
-		fmt.Println("error getting applied mitgrations:", err)
+		return fmt.Errorf("error getting applied migrations: %w", err)
 	}
 
 	defer appliedMigrationsRows.Close()
 
 	appliedMigrations, err := helpers.GetAppliedMigrationNames(appliedMigrationsRows)
 	if err != nil {
+		return fmt.Errorf("error getting applied migration names: %w", err)
 	}
 
 	var pendingMigrations []string
