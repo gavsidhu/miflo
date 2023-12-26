@@ -10,8 +10,6 @@ import (
 	"github.com/gavsidhu/miflo/internal/database"
 	"github.com/gavsidhu/miflo/internal/miflo"
 	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 var (
