@@ -13,6 +13,8 @@ import (
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,6 +32,10 @@ func dbTestCases() []dbTestCase {
 		{
 			name:        "PostgreSQL",
 			databaseURL: os.Getenv("POSTGRES_TEST_DATABASE_URL"),
+		},
+		{
+			name:        "libSQL",
+			databaseURL: os.Getenv("LIBSQL_TEST_DATABASE_URL"),
 		},
 	}
 }
@@ -55,6 +61,14 @@ func newTestDatabase(t *testing.T, databaseURL string) database.Database {
 		t.Fatalf("Failed to create test database: %v", err)
 		return nil
 	}
+
+	defer t.Cleanup(func() {
+		setupEnv(t)
+		err := os.Remove(os.Getenv("SQLITE_TEST_DATABASE_URL"))
+		if err != nil {
+			t.Logf("Failed to delete test database file: %v", err)
+		}
+	})
 
 	return db
 }

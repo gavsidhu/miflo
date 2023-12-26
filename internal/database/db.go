@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
 	"net/url"
 	"strings"
 )
@@ -55,6 +56,18 @@ func NewDatabase(databaseURL string) (Database, error) {
 			return nil, fmt.Errorf("error setting up PostgreSQL migrations table: %w", err)
 		}
 		return postgresDB, nil
+
+	case "libsql", "http":
+		db, err := sql.Open("libsql", databaseURL)
+		if err != nil {
+			return nil, fmt.Errorf("error opening libSQL database: %w", err)
+		}
+
+		libSQLDB := &libSQLDB{db}
+		if err := libSQLDB.ensureMigrationsTable(); err != nil {
+			return nil, fmt.Errorf("error setting up libSQL migrations table: %w", err)
+		}
+		return libSQLDB, nil
 
 	default:
 		return nil, fmt.Errorf("unsupported database type: %s", u.Scheme)
