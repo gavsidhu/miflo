@@ -49,7 +49,7 @@ jobs:
       - name: Run Tests
         run: go test ./...
         env:
-          DATABASE_URL: ${{ vars.DATABASE_URL }
+          DATABASE_URL: ${{ vars.DATABASE_URL }}
           POSTGRES_TEST_DATABASE_URL: ${{ vars.POSTGRES_TEST_DATABASE_URL }}
           SQLITE_TEST_DATABASE_URL: ${{ vars.SQLITE_TEST_DATABASE_URL }}
           LIBSQL_TEST_DATABASE_URL: ${{ vars.LIBSQL_TEST_DATABASE_URL }}
