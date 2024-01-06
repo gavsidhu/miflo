@@ -48,11 +48,9 @@ func setupEnv(t *testing.T) {
 	}
 	envPath := path.Join(cwd, "../../.env")
 
-	err = godotenv.Load(envPath)
+	// Try to load env but don't fail otherewise tests will fail in CI/CD action
+	_ = godotenv.Load(envPath)
 
-	if err != nil {
-		t.Fatalf("Error loading .env file from %s: %v", envPath, err)
-	}
 }
 
 func newTestDatabase(t *testing.T, databaseURL string) database.Database {
