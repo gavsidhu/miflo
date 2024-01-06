@@ -1,59 +1,36 @@
 package cmd
 
 import (
-	"flag"
 	"fmt"
+	"os"
 
-	"github.com/gavsidhu/miflo/internal/cli"
-)
-
-var (
-	showRootVersion bool
-	showRootHelp    bool
+	"github.com/spf13/cobra"
 )
 
 var Version = "dev"
 
 func init() {
-	rootCmd.Flags.Usage = printRootHelp
-	rootCmd.Flags.BoolVar(&showRootVersion, "v", false, "Show version information")
-	rootCmd.Flags.BoolVar(&showRootHelp, "h", false, "Show help information")
-
+	rootCmd.Version = Version
 }
 
-var rootCmd = cli.Command{
-	Name:        "miflo",
-	Description: "miflo is a simple migration manager tool for SQLite and PostgreSQL",
-	SubCommands: make(map[string]*cli.Command),
-	Flags:       flag.NewFlagSet("miflo", flag.ExitOnError),
-	Run: func(cmd *cli.Command, args []string) {
-
-		if showRootVersion {
-			fmt.Println("miflo version:", Version)
-			return
-		}
-
-		if showRootHelp || len(args) == 0 {
-			cmd.Flags.Usage()
-			return
+var rootCmd = &cobra.Command{
+	Use:   "miflo",
+	Short: "Miflo is a database migration manager for SQLite, PostgreSQL & Turso",
+	Long:  "A simple database migration manger for SQLite, PostgreSQL & Turso. Miflo is a stand-alone tool that can be used with any project.",
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			err := cmd.Help()
+			if err != nil {
+				fmt.Println(err)
+			}
+			os.Exit(0)
 		}
 	},
 }
 
-func printRootHelp() {
-
-	fmt.Println(rootCmd.Description)
-	fmt.Println("\nUsage:\n  miflo [command]")
-	fmt.Println("Available Commands:")
-	for name, subCmd := range rootCmd.SubCommands {
-		fmt.Printf("  %s\t\t%s\n", name, subCmd.Description)
-	}
-	fmt.Println("\nFlags:")
-	rootCmd.Flags.PrintDefaults()
-	fmt.Println("\nUse \"miflo [command] -h\" for more information about a command.")
-
-}
-
 func Execute() {
-	rootCmd.Execute()
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }

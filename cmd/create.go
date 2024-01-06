@@ -1,50 +1,31 @@
 package cmd
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"path"
 	"time"
 
-	"github.com/gavsidhu/miflo/internal/cli"
 	"github.com/gavsidhu/miflo/internal/helpers"
 	"github.com/gavsidhu/miflo/internal/miflo"
 	"github.com/joho/godotenv"
-)
-
-var (
-	showCreateHelp bool
+	"github.com/spf13/cobra"
 )
 
 func init() {
-	createCmd.Flags.BoolVar(&showCreateHelp, "h", false, "Show help information for miflo create")
-	createCmd.Flags.Usage = printCreateHelp
-	rootCmd.AddCommand(&createCmd)
+	rootCmd.AddCommand(createCmd)
 }
 
-var createCmd = cli.Command{
-	Name:        "create",
-	Description: "Create a new migration",
-	Flags:       flag.NewFlagSet("create", flag.ExitOnError),
-	Run: func(cmd *cli.Command, args []string) {
-
+var createCmd = &cobra.Command{
+	Use:     "create <migration name>",
+	Short:   "Create a migration",
+	Long:    "The create command creates a new migration file in the migrations folder. If there is no migration folder you will be prompted to create one in your root directory.",
+	Args:    cobra.ExactArgs(1),
+	Example: `miflo create setup_db_tables`,
+	Run: func(cmd *cobra.Command, args []string) {
 		err := godotenv.Load()
 		if err != nil {
 			fmt.Println("Error loading .env file")
-			return
-		}
-
-		cmd.Flags.Parse(args)
-
-		if showCreateHelp {
-			cmd.Flags.Usage()
-			return
-		}
-
-		if len(args) < 1 {
-			fmt.Printf("%sMigration name argument missing.%s\n", helpers.ColorYellow, helpers.ColorReset)
-			cmd.Flags.Usage()
 			return
 		}
 
@@ -85,15 +66,5 @@ var createCmd = cli.Command{
 		if err := miflo.CreateMigration(migrationName, cwd, timestamp); err != nil {
 			fmt.Println("error creating migration: ", err)
 		}
-
 	},
-}
-
-func printCreateHelp() {
-	fmt.Println(`
-Create a new migration.
-
-Usage: miflo create <migration_name>
-
-Example: miflo create add_users_table`)
 }

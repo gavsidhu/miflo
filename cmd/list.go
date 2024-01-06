@@ -1,42 +1,29 @@
 package cmd
 
 import (
-	"flag"
 	"fmt"
 	"os"
 
-	"github.com/gavsidhu/miflo/internal/cli"
 	"github.com/gavsidhu/miflo/internal/database"
 	"github.com/gavsidhu/miflo/internal/miflo"
 	"github.com/joho/godotenv"
-)
-
-var (
-	showListHelp bool
+	"github.com/spf13/cobra"
 )
 
 func init() {
-	listCmd.Flags.Usage = printListHelp
-	listCmd.Flags.BoolVar(&showListHelp, "h", false, "Show help information for miflo list")
-	rootCmd.AddCommand(&listCmd)
+	rootCmd.AddCommand(listCmd)
 }
 
-var listCmd = cli.Command{
-	Name:        "list",
-	Description: "List all pending migrations",
-	Flags:       flag.NewFlagSet("list", flag.ExitOnError),
-	Run: func(cmd *cli.Command, args []string) {
-
+var listCmd = &cobra.Command{
+	Use:     "list",
+	Short:   "List pending migrations",
+	Long:    "The list command lists all migrations that have not been applied in the migrations directory.",
+	Args:    cobra.NoArgs,
+	Example: "miflo list",
+	Run: func(cmd *cobra.Command, args []string) {
 		err := godotenv.Load()
 		if err != nil {
 			fmt.Println("Error loading .env file")
-			return
-		}
-
-		cmd.Flags.Parse(args)
-
-		if showListHelp {
-			cmd.Flags.Usage()
 			return
 		}
 
@@ -64,11 +51,4 @@ var listCmd = cli.Command{
 			return
 		}
 	},
-}
-
-func printListHelp() {
-	fmt.Println(`
-List pending migrations.
-
-Usage: miflo list`)
 }

@@ -2,42 +2,29 @@ package cmd
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"os"
 
-	"github.com/gavsidhu/miflo/internal/cli"
 	"github.com/gavsidhu/miflo/internal/database"
 	"github.com/gavsidhu/miflo/internal/miflo"
 	"github.com/joho/godotenv"
-)
-
-var (
-	showRevertHelp bool
+	"github.com/spf13/cobra"
 )
 
 func init() {
-	revertCmd.Flags.Usage = printRevertHelp
-	revertCmd.Flags.BoolVar(&showRevertHelp, "h", false, "Show help information for miflo revert")
-	rootCmd.AddCommand(&revertCmd)
+	rootCmd.AddCommand(revertCmd)
 }
 
-var revertCmd = cli.Command{
-	Name:        "revert",
-	Description: "Rollback most recent migration",
-	Flags:       flag.NewFlagSet("revert", flag.ExitOnError),
-	Run: func(cmd *cli.Command, args []string) {
-
+var revertCmd = &cobra.Command{
+	Use:     "revert",
+	Short:   "Revert lat migration",
+	Long:    "The revert command rolls back all the database migrations that were most recently applied using the up command.",
+	Args:    cobra.NoArgs,
+	Example: "miflo revert",
+	Run: func(cmd *cobra.Command, args []string) {
 		err := godotenv.Load()
 		if err != nil {
 			fmt.Println("Error loading .env file")
-			return
-		}
-
-		cmd.Flags.Parse(args)
-
-		if showRevertHelp {
-			cmd.Flags.Usage()
 			return
 		}
 
@@ -67,11 +54,4 @@ var revertCmd = cli.Command{
 			return
 		}
 	},
-}
-
-func printRevertHelp() {
-	fmt.Println(`
-Revert last migration.
-
-Usage: miflo revert`)
 }
