@@ -50,4 +50,11 @@ func TestNewDatabase(t *testing.T) {
 			}
 		})
 	}
+
+	t.Cleanup(func() {
+		err := os.Remove("./test.db")
+		if err != nil {
+			t.Logf("Failed to delete test database file: %v", err)
+		}
+	})
 }

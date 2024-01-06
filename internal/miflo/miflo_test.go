@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strings"
 	"testing"
 	"time"
 
@@ -64,7 +65,7 @@ func newTestDatabase(t *testing.T, databaseURL string) database.Database {
 
 	defer t.Cleanup(func() {
 		setupEnv(t)
-		err := os.Remove(os.Getenv("SQLITE_TEST_DATABASE_URL"))
+		err := os.Remove(strings.TrimPrefix(os.Getenv("SQLITE_TEST_DATABASE_URL"), "sqlite:"))
 		if err != nil {
 			t.Logf("Failed to delete test database file: %v", err)
 		}
