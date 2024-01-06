@@ -18,11 +18,7 @@ func TestNewDatabase(t *testing.T) {
 	}
 	envPath := path.Join(cwd, "../../.env")
 
-	err = godotenv.Load(envPath)
-
-	if err != nil {
-		t.Fatalf("Error loading .env file from %s: %v", envPath, err)
-	}
+	_ = godotenv.Load(envPath)
 
 	tests := []struct {
 		name    string
