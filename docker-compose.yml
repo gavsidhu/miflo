@@ -12,6 +12,10 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  sqld:
+    image: ghcr.io/libsql/sqld:latest
+    ports:
+      - "8080:8080"
 volumes:
   pgdata:
 
