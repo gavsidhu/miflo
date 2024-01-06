@@ -43,6 +43,9 @@ jobs:
       - name: Wait for PostgreSQL to be ready
         run: until pg_isready -h localhost -p 5432; do sleep 2; done
 
+      - name: Run libsql/sqld container
+        run: docker run -p 8080:8080 -d ghcr.io/libsql/sqld:latest
+
       - name: Run Tests
         run: go test ./...
         env:
