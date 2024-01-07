@@ -2,6 +2,7 @@ package miflo_test
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"os"
 	"path"
@@ -70,6 +71,11 @@ func newTestDatabase(t *testing.T, databaseURL string) database.Database {
 	})
 
 	return db
+}
+
+func clearDatabase(ctx context.Context, tx *sql.Tx) error {
+	tx.ExecContext(ctx, "DROP TABLE IF EXISTS migrations")
+	return nil
 }
 
 func TestCreateMigrations(t *testing.T) {
@@ -376,6 +382,25 @@ func TestApplyMigration(t *testing.T) {
 				assert.NoError(t, err)
 			})
 		}
+
+		t.Cleanup(func() {
+			tx, err := db.BeginTx(ctx, nil)
+			if err != nil {
+				t.Fatalf("Failed to begin transaction: %v", err)
+			}
+
+			if err := clearDatabase(ctx, tx); err != nil {
+				t.Fatalf("Failed to clear database: %v", err)
+			}
+
+			if err := tx.Commit(); err != nil {
+				t.Fatalf("Failed to commit transaction: %v", err)
+			}
+
+			if err := db.Close(); err != nil {
+				t.Logf("Failed to close database: %v", err)
+			}
+		})
 	}
 }
 
@@ -545,6 +570,25 @@ func TestRevertMigration(t *testing.T) {
 				assert.NoError(t, err)
 			})
 		}
+
+		t.Cleanup(func() {
+			tx, err := db.BeginTx(ctx, nil)
+			if err != nil {
+				t.Fatalf("Failed to begin transaction: %v", err)
+			}
+
+			if err := clearDatabase(ctx, tx); err != nil {
+				t.Fatalf("Failed to clear database: %v", err)
+			}
+
+			if err := tx.Commit(); err != nil {
+				t.Fatalf("Failed to commit transaction: %v", err)
+			}
+
+			if err := db.Close(); err != nil {
+				t.Logf("Failed to close database: %v", err)
+			}
+		})
 	}
 }
 
@@ -680,5 +724,24 @@ func TestListMigrations(t *testing.T) {
 
 			})
 		}
+
+		t.Cleanup(func() {
+			tx, err := db.BeginTx(ctx, nil)
+			if err != nil {
+				t.Fatalf("Failed to begin transaction: %v", err)
+			}
+
+			if err := clearDatabase(ctx, tx); err != nil {
+				t.Fatalf("Failed to clear database: %v", err)
+			}
+
+			if err := tx.Commit(); err != nil {
+				t.Fatalf("Failed to commit transaction: %v", err)
+			}
+
+			if err := db.Close(); err != nil {
+				t.Logf("Failed to close database: %v", err)
+			}
+		})
 	}
 }
