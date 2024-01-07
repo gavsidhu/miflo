@@ -88,7 +88,7 @@ func TestCreateMigrations(t *testing.T) {
 			expectMigrationFileCreate: true,
 			expectedError:             false,
 			setupFunc: func(cwd string) {
-				os.Mkdir(path.Join(cwd, "migrations"), os.ModePerm)
+				os.MkdirAll(path.Join(cwd, "migrations"), os.ModePerm)
 			},
 			cleanupFunc: func(cwd string) {
 				migrationsDir := path.Join(cwd, "migrations")
@@ -117,7 +117,7 @@ func TestCreateMigrations(t *testing.T) {
 			expectMigrationFileCreate: false,
 			expectedError:             true,
 			setupFunc: func(cwd string) {
-				os.Mkdir(path.Join(cwd, "migrations"), os.ModePerm)
+				os.MkdirAll(path.Join(cwd, "migrations"), os.ModePerm)
 			},
 			cleanupFunc: func(cwd string) {
 				migrationsDir := path.Join(cwd, "migrations")
@@ -188,7 +188,7 @@ func TestApplyMigration(t *testing.T) {
 			name:          "NoPendingigrations",
 			expectedError: false,
 			setupFunc: func(db database.Database, ctx context.Context, cwd string, dbName string) error {
-				if err := os.Mkdir(path.Join(cwd, "migrations"), os.ModePerm); err != nil {
+				if err := os.MkdirAll(path.Join(cwd, "migrations"), os.ModePerm); err != nil {
 					return err
 				}
 				return nil
