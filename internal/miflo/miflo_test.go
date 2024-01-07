@@ -346,19 +346,24 @@ func TestApplyMigration(t *testing.T) {
 		}
 
 		ctx := context.Background()
-		cwd := "../../test-migrations"
+		cwd, err := os.Getwd()
+		if err != nil {
+			t.Fatalf("Error getting current working directory: %v", err)
+		}
+
+		testMigrationsPath := path.Join(cwd, "test-migrations")
 
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
-				err := tt.setupFunc(db, ctx, cwd, dbCase.name)
+				err := tt.setupFunc(db, ctx, testMigrationsPath, dbCase.name)
 				if err != nil {
 					t.Fatalf("Setup failed: %v", err)
 				}
 
-				err = miflo.ApplyMigrations(db, ctx, cwd)
+				err = miflo.ApplyMigrations(db, ctx, testMigrationsPath)
 
 				if tt.postMigrationVerification != nil {
-					tt.postMigrationVerification(t, db, ctx, cwd)
+					tt.postMigrationVerification(t, db, ctx, testMigrationsPath)
 				}
 
 				if tt.expectedError {
@@ -367,7 +372,7 @@ func TestApplyMigration(t *testing.T) {
 					assert.NoError(t, err)
 				}
 
-				err = tt.cleanupFunc(db, ctx, cwd)
+				err = tt.cleanupFunc(db, ctx, testMigrationsPath)
 				assert.NoError(t, err)
 			})
 		}
@@ -510,19 +515,24 @@ func TestRevertMigration(t *testing.T) {
 		}
 
 		ctx := context.Background()
-		cwd := "../../test-migrations"
+		cwd, err := os.Getwd()
+		if err != nil {
+			t.Fatalf("Error getting current working directory: %v", err)
+		}
+
+		testMigrationsPath := path.Join(cwd, "test-migrations")
 
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
-				err := tt.setupFunc(db, ctx, cwd, dbCase.name)
+				err := tt.setupFunc(db, ctx, testMigrationsPath, dbCase.name)
 				if err != nil {
 					t.Fatalf("Setup failed: %v", err)
 				}
 
-				err = miflo.RevertMigrations(db, ctx, cwd)
+				err = miflo.RevertMigrations(db, ctx, testMigrationsPath)
 
 				if tt.postMigrationVerification != nil {
-					tt.postMigrationVerification(t, db, ctx, cwd)
+					tt.postMigrationVerification(t, db, ctx, testMigrationsPath)
 				}
 
 				if tt.expectedError {
@@ -531,7 +541,7 @@ func TestRevertMigration(t *testing.T) {
 					assert.NoError(t, err)
 				}
 
-				err = tt.cleanupFunc(db, ctx, cwd)
+				err = tt.cleanupFunc(db, ctx, testMigrationsPath)
 				assert.NoError(t, err)
 			})
 		}
@@ -639,18 +649,23 @@ func TestListMigrations(t *testing.T) {
 		}
 
 		ctx := context.Background()
-		cwd := "../../test-migrations"
+		cwd, err := os.Getwd()
+		if err != nil {
+			t.Fatalf("Error getting current working directory: %v", err)
+		}
+
+		testMigrationsPath := path.Join(cwd, "test-migrations")
 
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
 				if tt.setupFunc != nil {
-					err := tt.setupFunc(db, ctx, cwd, dbCase.name)
+					err := tt.setupFunc(db, ctx, testMigrationsPath, dbCase.name)
 					if err != nil {
 						t.Fatalf("Setup failed: %v", err)
 					}
 				}
 
-				err := miflo.ListPendingMigrations(db, cwd)
+				err := miflo.ListPendingMigrations(db, testMigrationsPath)
 
 				if tt.expectedError {
 					assert.Error(t, err)
@@ -659,7 +674,7 @@ func TestListMigrations(t *testing.T) {
 				}
 
 				if tt.cleanupFunc != nil {
-					err = tt.cleanupFunc(db, ctx, cwd)
+					err = tt.cleanupFunc(db, ctx, testMigrationsPath)
 					assert.NoError(t, err)
 				}
 
