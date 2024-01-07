@@ -30,7 +30,7 @@ func (db *libSQLDB) ApplyMigration(ctx context.Context, tx *sql.Tx, migrationNam
 }
 
 func (db *libSQLDB) RecordMigration(ctx context.Context, tx *sql.Tx, migrationName string, batchNum int) error {
-	if _, err := tx.ExecContext(ctx, "INSERT INTO migrations (name, batch, applied) VALUES (?, ?, ?)", migrationName, batchNum, true); err != nil {
+	if _, err := tx.ExecContext(ctx, "INSERT INTO miflo_migrations (name, batch, applied) VALUES (?, ?, ?)", migrationName, batchNum, true); err != nil {
 		return fmt.Errorf("error executing migration row insert: %w", err)
 	}
 
@@ -53,7 +53,7 @@ func (db *libSQLDB) RevertMigration(ctx context.Context, tx *sql.Tx, migrationNa
 }
 
 func (db *libSQLDB) DeleteMigration(ctx context.Context, tx *sql.Tx, batchNum int) error {
-	_, err := tx.ExecContext(ctx, "DELETE FROM migrations where batch = ?", batchNum)
+	_, err := tx.ExecContext(ctx, "DELETE FROM miflo_migrations where batch = ?", batchNum)
 	if err != nil {
 		return fmt.Errorf("error executing migration row delete: %w", err)
 	}
@@ -99,7 +99,7 @@ func (db *libSQLDB) GetUnappliedMigrations(cwd string) ([]string, error) {
 }
 
 func (db *libSQLDB) GetAppliedMigrations() (*sql.Rows, error) {
-	rows, err := db.Query("SELECT name FROM migrations WHERE applied = TRUE")
+	rows, err := db.Query("SELECT name FROM miflo_migrations WHERE applied = TRUE")
 	if err != nil {
 		fmt.Println("Error getting applied migrations:", err)
 		return nil, fmt.Errorf("error querying for applied migrations: %w", err)
@@ -139,7 +139,7 @@ func (db *libSQLDB) GetMigrationsToRevert(batch int) ([]string, error) {
 }
 
 func (db *libSQLDB) GetAppliedMigrationsByBatch(batch int) (*sql.Rows, error) {
-	query := "SELECT name FROM migrations WHERE applied = 1 AND batch = ?"
+	query := "SELECT name FROM miflo_migrations WHERE applied = 1 AND batch = ?"
 	rows, err := db.Query(query, batch)
 	if err != nil {
 		fmt.Printf("Error getting applied migrations for batch %d: %v\n", batch, err)
@@ -151,7 +151,7 @@ func (db *libSQLDB) GetAppliedMigrationsByBatch(batch int) (*sql.Rows, error) {
 
 func (db *libSQLDB) GetNextBatchNumber() (int, error) {
 	var maxBatchNum int
-	err := db.QueryRow("SELECT COALESCE(MAX(batch), 0) + 1 FROM migrations").Scan(&maxBatchNum)
+	err := db.QueryRow("SELECT COALESCE(MAX(batch), 0) + 1 FROM miflo_migrations").Scan(&maxBatchNum)
 	if err != nil {
 		return 0, err
 	}
@@ -160,7 +160,7 @@ func (db *libSQLDB) GetNextBatchNumber() (int, error) {
 
 func (db *libSQLDB) GetLastBatchNumber() (int, error) {
 	var lastBatchNum int
-	err := db.QueryRow("SELECT COALESCE(MAX(batch), 0) FROM migrations").Scan(&lastBatchNum)
+	err := db.QueryRow("SELECT COALESCE(MAX(batch), 0) FROM miflo_migrations").Scan(&lastBatchNum)
 	if err != nil {
 		return 0, err
 	}
@@ -171,7 +171,7 @@ func (db *libSQLDB) GetLastBatchNumber() (int, error) {
 
 func (db *libSQLDB) ensureMigrationsTable() error {
 	createTableSQL := `
-    CREATE TABLE IF NOT EXISTS migrations (
+    CREATE TABLE IF NOT EXISTS miflo_migrations (
         id INTEGER PRIMARY KEY,
         name TEXT UNIQUE NOT NULL,
         batch INTEGER NOT NULL,

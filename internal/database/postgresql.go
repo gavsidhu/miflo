@@ -30,7 +30,7 @@ func (db *PostgresDB) ApplyMigration(ctx context.Context, tx *sql.Tx, migrationN
 }
 
 func (db *PostgresDB) RecordMigration(ctx context.Context, tx *sql.Tx, migrationName string, batchNum int) error {
-	if _, err := tx.ExecContext(ctx, "INSERT INTO migrations (name, batch, applied) VALUES ($1, $2, $3)", migrationName, batchNum, true); err != nil {
+	if _, err := tx.ExecContext(ctx, "INSERT INTO miflo_migrations (name, batch, applied) VALUES ($1, $2, $3)", migrationName, batchNum, true); err != nil {
 		return fmt.Errorf("error executing migration row insert: %w", err)
 	}
 
@@ -53,7 +53,7 @@ func (db *PostgresDB) RevertMigration(ctx context.Context, tx *sql.Tx, migration
 }
 
 func (db *PostgresDB) DeleteMigration(ctx context.Context, tx *sql.Tx, batchNum int) error {
-	_, err := tx.ExecContext(ctx, "DELETE FROM migrations where batch = $1", batchNum)
+	_, err := tx.ExecContext(ctx, "DELETE FROM miflo_migrations where batch = $1", batchNum)
 	if err != nil {
 		return fmt.Errorf("error exectuting migration row delete: %w", err)
 	}
@@ -99,7 +99,7 @@ func (db *PostgresDB) GetUnappliedMigrations(cwd string) ([]string, error) {
 }
 
 func (db *PostgresDB) GetAppliedMigrations() (*sql.Rows, error) {
-	rows, err := db.Query("SELECT name FROM migrations WHERE applied = TRUE")
+	rows, err := db.Query("SELECT name FROM miflo_migrations WHERE applied = TRUE")
 	if err != nil {
 		fmt.Println("Error getting applied migrations:", err)
 		return nil, fmt.Errorf("error querying for applied migrations: %w", err)
@@ -137,7 +137,7 @@ func (db *PostgresDB) GetMigrationsToRevert(batch int) ([]string, error) {
 }
 
 func (db *PostgresDB) GetAppliedMigrationsByBatch(batch int) (*sql.Rows, error) {
-	query := "SELECT name FROM migrations WHERE applied = true AND batch = $1"
+	query := "SELECT name FROM miflo_migrations WHERE applied = true AND batch = $1"
 	rows, err := db.Query(query, batch)
 	if err != nil {
 		fmt.Printf("error getting applied migrations for batch %d: %v\n", batch, err)
@@ -149,7 +149,7 @@ func (db *PostgresDB) GetAppliedMigrationsByBatch(batch int) (*sql.Rows, error) 
 
 func (db *PostgresDB) GetNextBatchNumber() (int, error) {
 	var maxBatchNum int
-	err := db.QueryRow("SELECT COALESCE(MAX(batch), 0) + 1 FROM migrations").Scan(&maxBatchNum)
+	err := db.QueryRow("SELECT COALESCE(MAX(batch), 0) + 1 FROM miflo_migrations").Scan(&maxBatchNum)
 	if err != nil {
 		return 0, err
 	}
@@ -158,7 +158,7 @@ func (db *PostgresDB) GetNextBatchNumber() (int, error) {
 
 func (db *PostgresDB) GetLastBatchNumber() (int, error) {
 	var lastBatchNum int
-	err := db.QueryRow("SELECT COALESCE(MAX(batch), 0) FROM migrations").Scan(&lastBatchNum)
+	err := db.QueryRow("SELECT COALESCE(MAX(batch), 0) FROM miflo_migrations").Scan(&lastBatchNum)
 	if err != nil {
 		return 0, err
 	}
@@ -169,7 +169,7 @@ func (db *PostgresDB) GetLastBatchNumber() (int, error) {
 
 func (db *PostgresDB) ensureMigrationsTable() error {
 	createTableSQL := `
-    CREATE TABLE IF NOT EXISTS migrations (
+    CREATE TABLE IF NOT EXISTS miflo_migrations (
         id SERIAL PRIMARY KEY,
         name VARCHAR(255) UNIQUE NOT NULL,
         batch INTEGER NOT NULL,

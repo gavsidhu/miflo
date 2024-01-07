@@ -247,7 +247,7 @@ func TestApplyMigration(t *testing.T) {
 					return err
 				}
 
-				query = "DELETE from migrations"
+				query = "DELETE FROM miflo_migrations"
 
 				_, err = db.ExecContext(ctx, query)
 				if err != nil {
@@ -289,12 +289,12 @@ func TestApplyMigration(t *testing.T) {
 				}
 				if dbName == "PostgreSQL" {
 
-					if _, err := db.ExecContext(ctx, "INSERT INTO migrations (name, batch, applied) VALUES($1, $2, $3)", fmt.Sprintf("%d_%s", timestamp, "test_migration"), 1, true); err != nil {
+					if _, err := db.ExecContext(ctx, "INSERT INTO miflo_migrations (name, batch, applied) VALUES($1, $2, $3)", fmt.Sprintf("%d_%s", timestamp, "test_migration"), 1, true); err != nil {
 						return err
 					}
 				} else {
 
-					if _, err := db.ExecContext(ctx, "INSERT INTO migrations (name, batch, applied) VALUES(?, ?, ?)", fmt.Sprintf("%d_%s", timestamp, "test_migration"), 1, true); err != nil {
+					if _, err := db.ExecContext(ctx, "INSERT INTO miflo_migrations (name, batch, applied) VALUES(?, ?, ?)", fmt.Sprintf("%d_%s", timestamp, "test_migration"), 1, true); err != nil {
 						return err
 					}
 
@@ -316,7 +316,7 @@ func TestApplyMigration(t *testing.T) {
 					return err
 				}
 
-				query = "DELETE from migrations"
+				query = "DELETE FROM miflo_migrations"
 
 				_, err = db.ExecContext(ctx, query)
 				if err != nil {
@@ -329,7 +329,7 @@ func TestApplyMigration(t *testing.T) {
 				_, err := db.ExecContext(ctx, "SELECT 1 FROM miflo_test LIMIT 1")
 				assert.Error(t, err, "DB should not have miflo_test table")
 
-				rows, err := db.QueryContext(ctx, "SELECT COUNT(*) FROM migrations")
+				rows, err := db.QueryContext(ctx, "SELECT COUNT(*) FROM miflo_migrations")
 				assert.NoError(t, err)
 				defer rows.Close()
 
@@ -427,12 +427,12 @@ func TestRevertMigration(t *testing.T) {
 
 				if dbName == "PostgreSQL" {
 
-					if _, err := db.ExecContext(ctx, "INSERT INTO migrations (name, batch, applied) VALUES($1, $2, $3)", fmt.Sprintf("%d_%s", timestamp, "test_migration"), 1, true); err != nil {
+					if _, err := db.ExecContext(ctx, "INSERT INTO miflo_migrations (name, batch, applied) VALUES($1, $2, $3)", fmt.Sprintf("%d_%s", timestamp, "test_migration"), 1, true); err != nil {
 						return err
 					}
 				} else {
 
-					if _, err := db.ExecContext(ctx, "INSERT INTO migrations (name, batch, applied) VALUES(?, ?, ?)", fmt.Sprintf("%d_%s", timestamp, "test_migration"), 1, true); err != nil {
+					if _, err := db.ExecContext(ctx, "INSERT INTO miflo_migrations (name, batch, applied) VALUES(?, ?, ?)", fmt.Sprintf("%d_%s", timestamp, "test_migration"), 1, true); err != nil {
 						return err
 					}
 
@@ -474,7 +474,7 @@ func TestRevertMigration(t *testing.T) {
 				_, err := db.ExecContext(ctx, "SELECT 1 FROM miflo_test LIMIT 1")
 				assert.Error(t, err, "DB should not have miflo_test table")
 
-				rows, err := db.QueryContext(ctx, "SELECT * FROM migrations LIMIT 1")
+				rows, err := db.QueryContext(ctx, "SELECT * FROM miflo_migrations LIMIT 1")
 				assert.NoError(t, err, "Query should not return an error")
 				defer rows.Close()
 
@@ -488,12 +488,12 @@ func TestRevertMigration(t *testing.T) {
 			setupFunc: func(db database.Database, ctx context.Context, cwd string, dbName string) error {
 				if dbName == "PostgreSQL" {
 
-					if _, err := db.ExecContext(ctx, "INSERT INTO migrations (name, batch, applied) VALUES($1, $2, $3)", fmt.Sprintf("%d_%s", time.Now().Unix(), "test_migration"), 1, false); err != nil {
+					if _, err := db.ExecContext(ctx, "INSERT INTO miflo_migrations (name, batch, applied) VALUES($1, $2, $3)", fmt.Sprintf("%d_%s", time.Now().Unix(), "test_migration"), 1, false); err != nil {
 						return err
 					}
 				} else {
 
-					if _, err := db.ExecContext(ctx, "INSERT INTO migrations (name, batch, applied) VALUES(?, ?, ?)", fmt.Sprintf("%d_%s", time.Now().Unix(), "test_migration"), 1, false); err != nil {
+					if _, err := db.ExecContext(ctx, "INSERT INTO miflo_migrations (name, batch, applied) VALUES(?, ?, ?)", fmt.Sprintf("%d_%s", time.Now().Unix(), "test_migration"), 1, false); err != nil {
 						return err
 					}
 
@@ -501,14 +501,14 @@ func TestRevertMigration(t *testing.T) {
 				return nil
 			},
 			cleanupFunc: func(db database.Database, ctx context.Context, cwd string) error {
-				if _, err := db.ExecContext(ctx, "DELETE FROM migrations"); err != nil {
+				if _, err := db.ExecContext(ctx, "DELETE FROM miflo_migrations"); err != nil {
 					return err
 				}
 
 				return nil
 			},
 			postMigrationVerification: func(t *testing.T, db database.Database, ctx context.Context, cwd string) {
-				rows, err := db.QueryContext(ctx, "SELECT COUNT(*) FROM migrations")
+				rows, err := db.QueryContext(ctx, "SELECT COUNT(*) FROM miflo_migrations")
 				assert.NoError(t, err)
 				defer rows.Close()
 
@@ -629,12 +629,12 @@ func TestListMigrations(t *testing.T) {
 
 				if dbName == "PostgreSQL" {
 
-					if _, err := db.ExecContext(ctx, "INSERT INTO migrations (name, batch, applied) VALUES($1, $2, $3)", fmt.Sprintf("%d_%s", timestamp, "test_migration"), 1, true); err != nil {
+					if _, err := db.ExecContext(ctx, "INSERT INTO miflo_migrations (name, batch, applied) VALUES($1, $2, $3)", fmt.Sprintf("%d_%s", timestamp, "test_migration"), 1, true); err != nil {
 						return err
 					}
 				} else {
 
-					if _, err := db.ExecContext(ctx, "INSERT INTO migrations (name, batch, applied) VALUES(?, ?, ?)", fmt.Sprintf("%d_%s", timestamp, "test_migration"), 1, true); err != nil {
+					if _, err := db.ExecContext(ctx, "INSERT INTO miflo_migrations (name, batch, applied) VALUES(?, ?, ?)", fmt.Sprintf("%d_%s", timestamp, "test_migration"), 1, true); err != nil {
 						return err
 					}
 
@@ -655,7 +655,7 @@ func TestListMigrations(t *testing.T) {
 					return err
 				}
 
-				if _, err := db.ExecContext(ctx, "DELETE FROM migrations"); err != nil {
+				if _, err := db.ExecContext(ctx, "DELETE FROM miflo_migrations"); err != nil {
 					return err
 				}
 
