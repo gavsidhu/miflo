@@ -12,12 +12,13 @@ BINARY_FILE=""
 
 case "$ARCH" in
     "x86_64")
-        # For Intel Macs
-        BINARY_FILE="miflo_${LATEST_VERSION}_darwin_amd64"
+        BINARY_FILE="miflo_${LATEST_VERSION}_linux_amd64"
         ;;
-    "arm64")
-        # For Apple Silicon Macs
-        BINARY_FILE="miflo_${LATEST_VERSION}_darwin_arm64"
+    "aarch64")
+        BINARY_FILE="miflo_${LATEST_VERSION}_linux_arm64"
+        ;;
+    "armv6l")
+        BINARY_FILE="miflo_${LATEST_VERSION}_linux_armv6"
         ;;
     *)
         echo "Unsupported architecture: $ARCH"
