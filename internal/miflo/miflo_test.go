@@ -131,34 +131,43 @@ func TestCreateMigrations(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cwd := "../../test-migrations"
-
-			if tt.setupFunc != nil {
-				tt.setupFunc(cwd)
+			cwd, err := os.Getwd()
+			if err != nil {
+				t.Fatalf("Error getting current working directory: %v", err)
 			}
 
-			timestamp := time.Now().Unix()
+			testMigrationsPath := path.Join(cwd, "test-migrations")
 
-			err := miflo.CreateMigration(tt.migrationName, cwd, timestamp)
+			for _, tt := range tests {
+				t.Run(tt.name, func(t *testing.T) {
+					if tt.setupFunc != nil {
+						tt.setupFunc(testMigrationsPath)
+					}
 
-			if tt.expectedError {
-				assert.Error(t, err, "Expected an error for %s", tt.name)
-			} else {
-				assert.NoError(t, err, "Expected no error for %s", tt.name)
-				if tt.expectMigrationFileCreate {
 					timestamp := time.Now().Unix()
-					dirName := fmt.Sprintf("%d_%s", timestamp, tt.migrationName)
-					_, err = os.Stat(path.Join(cwd, "migrations", dirName))
-					assert.NoError(t, err)
-					_, err = os.Stat(path.Join(cwd, "migrations", dirName, "up.sql"))
-					assert.NoError(t, err)
-					_, err = os.Stat(path.Join(cwd, "migrations", dirName, "down.sql"))
-					assert.NoError(t, err)
-				}
-			}
+					migrationPath := path.Join(testMigrationsPath, fmt.Sprintf("migrations/%d_%s", timestamp, tt.migrationName))
 
-			if tt.cleanupFunc != nil {
-				tt.cleanupFunc(cwd)
+					// Create the migration using the absolute path
+					err := miflo.CreateMigration(tt.migrationName, testMigrationsPath, timestamp)
+
+					if tt.expectedError {
+						assert.Error(t, err, "Expected an error for %s", tt.name)
+					} else {
+						assert.NoError(t, err, "Expected no error for %s", tt.name)
+						if tt.expectMigrationFileCreate {
+							_, err = os.Stat(migrationPath)
+							assert.NoError(t, err)
+							_, err = os.Stat(path.Join(migrationPath, "up.sql"))
+							assert.NoError(t, err)
+							_, err = os.Stat(path.Join(migrationPath, "down.sql"))
+							assert.NoError(t, err)
+						}
+					}
+
+					if tt.cleanupFunc != nil {
+						tt.cleanupFunc(testMigrationsPath)
+					}
+				})
 			}
 		})
 	}
