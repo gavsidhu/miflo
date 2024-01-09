@@ -4,9 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	_ "github.com/tursodatabase/libsql-client-go/libsql"
 	"net/url"
 	"strings"
+
+	_ "github.com/lib/pq"
+	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
 type Database interface {
