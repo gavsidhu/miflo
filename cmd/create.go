@@ -8,7 +8,6 @@ import (
 
 	"github.com/gavsidhu/miflo/internal/helpers"
 	"github.com/gavsidhu/miflo/internal/miflo"
-	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 )
 
@@ -23,11 +22,6 @@ var createCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(1),
 	Example: `miflo create setup_db_tables`,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := godotenv.Load()
-		if err != nil {
-			fmt.Println("Error loading .env file")
-			return
-		}
 
 		cwd, err := os.Getwd()
 
