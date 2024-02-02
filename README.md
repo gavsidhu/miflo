@@ -4,6 +4,9 @@
 
 Miflo is a database schema migration tool designed to simplify database schema changes for SQLite, PostgreSQL, and libSQL databases.
 
+## Motivation
+I often use [Turso](https://turso.tech/) as my database for personal project. I wanted a way to keep track of my database changes as I developed my projects but couldn't find a tool that specifically worked with Turso so I created Miflo. I also made it work with PostgreSQL and SQLite since I use those databases aswell.
+
 ## Table of Contents
 - [Installation](#installation)
 - [Commands](#commands)
